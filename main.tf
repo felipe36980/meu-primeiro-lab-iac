@@ -80,9 +80,13 @@ resource "aws_security_group" "web_sg" {
   }
 }
 
-// REGRA DE ENTRADA (INBOUND) PARA HTTP
-resource "network_acl_id = aws_vpc.lab_vpc.default_network_acl_id" {
-  network_acl_id = data.aws_network_acl.default.id
+# =======================================================
+# SEÇÃO CORRIGIDA DAS REGRAS DA NACL
+# =======================================================
+
+# REGRA DE ENTRADA (INBOUND) PARA HTTP
+resource "aws_network_acl_rule" "inbound_http" {
+  network_acl_id = aws_vpc.lab_vpc.default_network_acl_id
   rule_number    = 100
   egress         = false // false = Inbound
   protocol       = "tcp"
@@ -92,10 +96,10 @@ resource "network_acl_id = aws_vpc.lab_vpc.default_network_acl_id" {
   to_port        = 80
 }
 
-// REGRA DE ENTRADA (INBOUND) PARA SSH
-resource "network_acl_id = aws_vpc.lab_vpc.default_network_acl_id" {
-  network_acl_id = data.aws_network_acl.default.id
-  rule_number    = 101 // Número de regra diferente
+# REGRA DE ENTRADA (INBOUND) PARA SSH
+resource "aws_network_acl_rule" "inbound_ssh" {
+  network_acl_id = aws_vpc.lab_vpc.default_network_acl_id
+  rule_number    = 101 // Número de regra diferente para não haver conflito
   egress         = false
   protocol       = "tcp"
   rule_action    = "allow"
@@ -104,18 +108,19 @@ resource "network_acl_id = aws_vpc.lab_vpc.default_network_acl_id" {
   to_port        = 22
 }
 
-// REGRA DE SAÍDA (OUTBOUND) PARA TODO O TRÁFEGO
-// Permite que o servidor responda às requisições em portas altas (efêmeras)
+# REGRA DE SAÍDA (OUTBOUND) PARA TODO O TRÁFEGO
 resource "aws_network_acl_rule" "outbound_all" {
-  network_acl_id = data.aws_network_acl.default.id
+  network_acl_id = aws_vpc.lab_vpc.default_network_acl_id
   rule_number    = 100
   egress         = true // true = Outbound
-  protocol       = "all" // Permite todo o protocolo
+  protocol       = "all"
   rule_action    = "allow"
   cidr_block     = "0.0.0.0/0"
   from_port      = 0
   to_port        = 0
 }
+
+# =======================================================
 // A Máquina Virtual (EC2)
 resource "aws_instance" "web_server" {
   ami           = "ami-0341d95f75f311023" // Cole sua AMI correta aqui
