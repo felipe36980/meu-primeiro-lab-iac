@@ -1,0 +1,42 @@
+name: Deploy Terraform to AWS
+
+# Este workflow roda automaticamente sempre que houver um push na branch 'main'
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform-deploy:
+    name: Terraform Deploy
+    runs-on: ubuntu-latest # O workflow vai rodar em uma máquina virtual Linux (Ubuntu)
+
+    steps:
+      # Passo 1: Baixar o nosso código do repositório
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Passo 2: Configurar o Terraform (instalar o programa)
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      # Passo 3: Configurar as credenciais da AWS usando os nossos Secrets
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 # Mude para a região que você está usando (ex: sa-east-1)
+
+      # Passo 4: Rodar 'terraform init'
+      - name: Terraform Init
+        run: terraform init
+
+      # Passo 5: Rodar 'terraform plan' (para vermos o plano nos logs)
+      - name: Terraform Plan
+        run: terraform plan
+
+      # Passo 6: Rodar 'terraform apply'
+      # A flag -auto-approve é necessária para que ele não fique esperando uma confirmação manual
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
