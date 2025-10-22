@@ -87,7 +87,7 @@ resource "aws_security_group" "web_sg" {
 # REGRA DE ENTRADA (INBOUND) PARA HTTP
 resource "aws_network_acl_rule" "inbound_http" {
   network_acl_id = aws_vpc.lab_vpc.default_network_acl_id
-  rule_number    = 100
+  rule_number    = 200
   egress         = false // false = Inbound
   protocol       = "tcp"
   rule_action    = "allow"
@@ -99,7 +99,7 @@ resource "aws_network_acl_rule" "inbound_http" {
 # REGRA DE ENTRADA (INBOUND) PARA SSH
 resource "aws_network_acl_rule" "inbound_ssh" {
   network_acl_id = aws_vpc.lab_vpc.default_network_acl_id
-  rule_number    = 101 // Número de regra diferente para não haver conflito
+  rule_number    = 210 // Número de regra diferente para não haver conflito
   egress         = false
   protocol       = "tcp"
   rule_action    = "allow"
@@ -111,7 +111,7 @@ resource "aws_network_acl_rule" "inbound_ssh" {
 # REGRA DE SAÍDA (OUTBOUND) PARA TODO O TRÁFEGO
 resource "aws_network_acl_rule" "outbound_all" {
   network_acl_id = aws_vpc.lab_vpc.default_network_acl_id
-  rule_number    = 100
+  rule_number    = 200
   egress         = true // true = Outbound
   protocol       = "all"
   rule_action    = "allow"
