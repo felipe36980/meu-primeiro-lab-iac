@@ -1,0 +1,16 @@
+---
+- name: Configurar Servidor Web Nginx
+  hosts: webserver
+  become: yes # Executar tarefas como superusuário (sudo)
+
+  tasks:
+    - name: Instalar o Nginx
+      ansible.builtin.package:
+        name: nginx
+        state: present
+
+    - name: Iniciar e habilitar o serviço Nginx
+      ansible.builtin.service:
+        name: nginx
+        state: started
+        enabled: yes
