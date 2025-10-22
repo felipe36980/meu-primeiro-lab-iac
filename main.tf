@@ -79,14 +79,9 @@ resource "aws_security_group" "web_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
-# Pega a Network ACL padrão da nossa VPC para que possamos adicionar regras a ela
-data "aws_network_acl" "default" {
-  default = true
-  vpc_id  = aws_vpc.lab_vpc.id
-}
 
 // REGRA DE ENTRADA (INBOUND) PARA HTTP
-resource "aws_network_acl_rule" "inbound_http" {
+resource "network_acl_id = aws_vpc.lab_vpc.default_network_acl_id" {
   network_acl_id = data.aws_network_acl.default.id
   rule_number    = 100
   egress         = false // false = Inbound
@@ -98,7 +93,7 @@ resource "aws_network_acl_rule" "inbound_http" {
 }
 
 // REGRA DE ENTRADA (INBOUND) PARA SSH
-resource "aws_network_acl_rule" "inbound_ssh" {
+resource "network_acl_id = aws_vpc.lab_vpc.default_network_acl_id" {
   network_acl_id = data.aws_network_acl.default.id
   rule_number    = 101 // Número de regra diferente
   egress         = false
