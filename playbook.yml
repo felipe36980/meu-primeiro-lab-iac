@@ -1,4 +1,4 @@
----
+--- ## Este Playbook instala o Nginx.
 - name: Configurar Servidor Web Nginx
   hosts: webserver
   become: yes # Executar tarefas como superusuário (sudo)
