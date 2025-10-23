@@ -1,0 +1,35 @@
+name: Manually Destroy Infrastructure
+
+# Esta linha mágica adiciona um botão para rodar o workflow manualmente
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform-destroy:
+    name: Terraform Destroy
+    runs-on: ubuntu-latest
+
+    steps:
+      # Passo 1: Baixar o código do repositório
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Passo 2: Instalar o Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+
+      # Passo 3: Configurar as credenciais da AWS
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 # <-- REGIÃO ATUALIZADA
+
+      # Passo 4: Rodar 'terraform init'
+      - name: Terraform Init
+        run: terraform init
+
+      # Passo 5: Rodar 'terraform destroy'
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
